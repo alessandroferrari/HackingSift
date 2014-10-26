@@ -112,9 +112,21 @@ class image_alignment(object):
         for m in matches:
             
             if len(m) == 2 and m[0].distance < m[1].distance * ratio:
-                m = m[0]
-                mkp1.append( kp1[m.queryIdx] )
-                mkp2.append( kp2[m.trainIdx] )
+		"""
+		matches is a list. m, an item of matches, a list as well,
+		containing as first item the best match, encoded as a DMatch, 
+		and the second item, the second best match, encoded as a DMatch.
+		DMatch is an object that has as attributes, queryIdx and trainIdx
+		that indicates the indeces of the matched points from kp1 and kp2.
+		Creates two lists, mpk1 and mpk2 that contains sorted kp1 points 
+		and kp2 points, such that are mantained the same indeces of 
+		the matched points.
+		"""                
+
+		#TODO
+
+		#Remove the next line when the exercise on sorting matched keypoints is done.
+		sys.exit(0)		
                 
         p1 = np.float32([kp.pt for kp in mkp1])
         p2 = np.float32([kp.pt for kp in mkp2])
@@ -128,6 +140,14 @@ class image_alignment(object):
         kp1, desc1 = self.detector.detectAndCompute(img1, None)
         kp2, desc2 = self.detector.detectAndCompute(img2, None)
         
+	"""Visualize here detected keypoints
+
+	TODO	
+
+	"""
+	#remove this after having done the exercise on visualizing detected points!!!
+	sys.exit(0)
+
         raw_matches = self.matcher.knnMatch(desc1, trainDescriptors = desc2, k = 2)
         p1, p2, kp_pairs = self.filter_matches(kp1, kp2, raw_matches)
         if len(p1) >= 4:

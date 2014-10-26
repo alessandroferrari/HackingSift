@@ -191,14 +191,16 @@ Once that keypoints are detected, SIFT transform is designed to provide a descri
 \end{figure}
 
 \subsection{Getting things done}
-The Python/OpenCV code for detecting and describing SIFT features on an image is:  
+The Python/OpenCV code for detecting and describing SIFT features on an image, that you can find in the get\{_}homography function in image\{_}alignment.py , is:  
 \begin{lstlisting}
 detector = cv2.SIFT(nfeatures=0, nOctaveLayers=3, contrastThreshold=0.03, edgeThreshold=10, sigma=1.6)
 kp1, desc1 = self.detector.detectAndCompute(img1, None)
 \end{lstlisting}
 If you have read carefully the theorical introduction on Scale Invariant Features Transform, these lines of code will look trivial and without mistery. The first line creates a SIFT object detector and descriptor. The second line detects and describes the keypoints. By using the parameters in input at the features detector constructor, it is possible to tune the desired results. If nfeatures is equal to zero, the number of features is determined according to the other parameters, otherwise it is forced to the value specified. The parameter contrastThreshold is the threshold to estabilish whether a feature has low contrast or not. The higher its value, the stronger has to be a feature to be detected. The edge threshold determines whether a keypoint has to be discarded or not depending its principal curvature. Its minimum value is 4, and it allows only perfect blobs. A value of 10 is a good compromise between features stability and detector sensitivity. The sigma parameter determines the sigma of gaussian kernel used to smooth in the scale space. The variable kp1 is a list of the detected keypoints, that includes their spatial coordinates, their radius and their orientation. The variable desc1 indicates the descriptors relative to those points.
 
-What do you expect when the contrast threshold is increased or decreased? What do you expect when the edge threshold is increased or decreased? Try to answer by the theorical understading that you have on SIFT, and later on, when you will be done in implementing your own image stitching algorithm, try experimentally different values and observe the results that you obtain. 
+By checking OpenCV documentation and tutorials online, write the code necessary to visualize detected Sift. The code has to be inserted in the get\{_}homography function in image\{_}alignment.py .
+
+What do you expect when the contrast threshold is increased or decreased? What do you expect when the edge threshold is increased or decreased? Try to answer by the theorical understading that you have on SIFT, and later on, by observing the detected features, try experimentally different values and observe the results that you obtain. Was your guess confirmed? 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{FLANN - Fast Linear Approximated Nearest Neighbours}
 \subsection{Features pairing}
