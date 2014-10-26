@@ -76,6 +76,7 @@ class image_alignment(object):
             norm = cv2.NORM_L2
             
         elif feat_type == self.ORB:
+
             detector = cv2.ORB(nfeatures=8000, scaleFactor=1.1, nlevels=8, edgeThreshold=10, firstLevel=0, WTA_K=2, patchSize=10)
             norm = cv2.NORM_HAMMING
         elif feat_type == self.BRISK:

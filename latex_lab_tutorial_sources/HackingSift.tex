@@ -57,10 +57,6 @@
 \newcommand{\labtitle}{Hacking Sift}
 \newcommand{\authorname}{Alessandro Ferrari}
 \newcommand{\emailauthor}{alessandroferrari87@gmail.com}
-\newcommand{\classno}{Remote Sensing}
-\newcommand{\professor}{Prof. Alberto Signoroni}
-\newcommand{\university}{Universit\'a degli Studi di Brescia}
-\newcommand{\presentationdate}{27 November 2013, Brescia}
 % END TITLE PAGE CONTENT %%%%%%%%%%%%%%%%%%%%
 
 
@@ -78,8 +74,7 @@
 \rule[13pt]{\textwidth}{1pt} \\ \vspace{150pt}
 {\large author: \authorname \\ \vspace{10pt}
 email: \emailauthor \\ \vspace{10pt}
-\classno \\ \professor \\ \university \\ \vspace{10pt}
-\presentationdate}
+\vspace{10pt}}
 \end{center}
 \end{titlepage}
 % END TITLE PAGE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -191,14 +186,14 @@ Once that keypoints are detected, SIFT transform is designed to provide a descri
 \end{figure}
 
 \subsection{Getting things done}
-The Python/OpenCV code for detecting and describing SIFT features on an image, that you can find in the get\{_}homography function in image\{_}alignment.py , is:  
+The Python/OpenCV code for detecting and describing SIFT features on an image, that you can find in the \verb|get_homography|function in \verb|image_alignment.py| , is:  
 \begin{lstlisting}
 detector = cv2.SIFT(nfeatures=0, nOctaveLayers=3, contrastThreshold=0.03, edgeThreshold=10, sigma=1.6)
 kp1, desc1 = self.detector.detectAndCompute(img1, None)
 \end{lstlisting}
 If you have read carefully the theorical introduction on Scale Invariant Features Transform, these lines of code will look trivial and without mistery. The first line creates a SIFT object detector and descriptor. The second line detects and describes the keypoints. By using the parameters in input at the features detector constructor, it is possible to tune the desired results. If nfeatures is equal to zero, the number of features is determined according to the other parameters, otherwise it is forced to the value specified. The parameter contrastThreshold is the threshold to estabilish whether a feature has low contrast or not. The higher its value, the stronger has to be a feature to be detected. The edge threshold determines whether a keypoint has to be discarded or not depending its principal curvature. Its minimum value is 4, and it allows only perfect blobs. A value of 10 is a good compromise between features stability and detector sensitivity. The sigma parameter determines the sigma of gaussian kernel used to smooth in the scale space. The variable kp1 is a list of the detected keypoints, that includes their spatial coordinates, their radius and their orientation. The variable desc1 indicates the descriptors relative to those points.
 
-By checking OpenCV documentation and tutorials online, write the code necessary to visualize detected Sift. The code has to be inserted in the get\{_}homography function in image\{_}alignment.py .
+By checking OpenCV documentation and tutorials online, write the code necessary to visualize detected Sift. The code has to be inserted in the \verb|get_homography| method of the \verb|image_alignment| class in \verb|image_alignment.py| module.
 
 What do you expect when the contrast threshold is increased or decreased? What do you expect when the edge threshold is increased or decreased? Try to answer by the theorical understading that you have on SIFT, and later on, by observing the detected features, try experimentally different values and observe the results that you obtain. Was your guess confirmed? 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -208,7 +203,7 @@ Object instances matching is a typical application where tools like SIFT are app
 
 FLANN library selects the best performing approximate nearest neighbours algorithm for the dataset. The algorithm selection is performed by cross-validation on a small chunk of the dataset where to perform nearest neighbors search. FLANN features matching is not robust by itself. Several pairs are wrong, since matching is approximate and features descriptors may fail in being distinctive enough. Wrong pairs may become an issue that may compromise image stitching process, if not addressed. A method for dealing with erroneous matching will be explained later on.
 \subsection{Getting things done}
-The Python/OpenCV code to implement flann follows: 
+The Python/OpenCV code to implement flann, in the method \verb|filter_matches| of \verb|image_alignment| class in \verb|image_alignment.py| , follows: 
 \begin{lstlisting}
 FLANN_INDEX_KDTREE = 1  # opencv bug: flann enums are missing
 norm = cv2.NORM_L2  # with different norms parameters may change 
@@ -224,7 +219,7 @@ The first 4 lines initialize the FLANN matcher. The variables kp1 and desc1 are 
     for m in raw_matches:
         if len(m) == 2 and m[0].distance < m[1].distance * ratio:
 \end{lstlisting}
-Implement your self the method. What do you expect to obtain while varying the variable ratio? When you will be done in implementing your alignment pipeline, try different values of ratio and look at the differences.Think about to use the explore matching function provided to you in the annex at the end of this lab track for visualizing differences in the obtained results.
+Implement your self the missing part of the method. What do you expect to obtain while varying the variable ratio? When you will be done in implementing your alignment pipeline, try different values of ratio and look at the differences.Think about to use the explore matching function provided to you in the annex at the end of this lab track for visualizing differences in the obtained results.
 
 \begin{figure}[h]
 	\begin{center}
@@ -238,7 +233,7 @@ Implement your self the method. What do you expect to obtain while varying the v
 \subsection{Homography design with RANSAC}
 Some features pairs are correct, while some others are completely wrong. If the image homograhy designed to perform overlapping is calculated by minimizing the linear projection error that takes into account also the incorrect pairs, the final result will be affected by a displacement that would make the alignment unpleasant for the observers. In order to have acceptable panorama pictures, such an error cannot be accepted, since even really small displacement results are really tedious to sight. So, instead of linear projection, RANSAC is applied. RANSAC is an algorithm that selects a subset of inliers pairs matching, while discarding outliers matching. Inliers are pairs that are "coherent" with the homography for overlapping, while outliers do not fit into it. Consider a dataset of N features pairs, RANSAC select a smaller subset of M features pairs and calculate the homography model according to them. Just 4 matches are necessary to compute a model of the homography. After calculated the homography, it establishes the number of features pairs that are closer than a certain tolerance, the inliers. If the number of inliers is bigger than a number K, it found a suitable solution, otherwise it will try a new solution selecting a new subset of M samples and repeating the previous steps. In this way, outliers are discarded and only best matches are kept to perform the overlapping. This method relies on the assumtion that is highly likely that there are at least K good pairs of matches, the so called inliers. 
 \subsection{Getting things done}
-It follows the code for ransac and homography computation in python and OpenCV:
+It follows the code for ransac and homography computation in python and OpenCV, that can be found in the method \verb|get_method| of the class \verb|image_alignment| in the module \verb|image_alignment.py|:
 \begin{lstlisting}
 if len(p1) >= 4:
 	H, status = cv2.findHomography(p1, p2, method = cv2.RANSAC, ransacReprojThreshold = 5.0)
@@ -298,7 +293,7 @@ def images_blending(img1, img2, width_panorama, height_panorama, H, smoothing_wi
     return panorama1 + panorama2
 \end{lstlisting}
 
-What is this function supposed to do in detail?
+Those methods can be found in the blending.py module. What is this function supposed to do in detail?
 
 \begin{lstlisting}
 #apply the homography for overlapping images, meanwhile performing blending between
@@ -306,11 +301,7 @@ What is this function supposed to do in detail?
 panorama_image = images_blending(img1, img2, width_panorama, height_panorama, H)
 \end{lstlisting}
 
-Try to understand this code.
-
-\section{Do it yourself}
-
-Now, you definitevely have all the elements needed to build your own pipeline of images alignment. Remember to have fun while doing it! 
+The \verb|images_blending| blending is called in \verb|image_stitching.py|.
 
 \newpage
 \section{Results}
@@ -337,6 +328,10 @@ Some visual results of the experiment follows.
 \label{Pair matching of two view of New York skyline.}
 \end{figure}
 
+\section{Do it yourself!}
+Go through the code again and change the parameters given to the constructor of the \verb|images_alignment| class, so that you can implement the image stitching pipeline with SURF and ORB features. Compare the results obtained in terms of speed and accuracy. \newline
+Which one is the most accurated method? Which one the least? Which one is the faster method? Which one is the slower?\newline
+\vspace{3mm}
 I hope you have enjoyed it!
 
 \newpage
