@@ -7,6 +7,7 @@ Created on Apr 16, 2013
 '''
 import numpy as np
 import cv2
+import sys
 
 def getsize(img):
     h, w = img.shape[:2]
