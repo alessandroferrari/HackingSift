@@ -11,7 +11,7 @@ import numpy as np
 import cv2
 import os
 
-fn_base = os.path.join(os.getcwd(),"test_images")
+fn_base = os.path.join(os.getcwd(),"data")
 #edit here for trying with different images
 fn_img1 = "rockfeller_1.JPG"
 fn_img2 = "rockfeller_2.JPG"
